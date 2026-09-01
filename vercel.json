@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/automation/tie-renewals",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Supabase local temporary files
+supabase/.temp/
+
+# Next.js
+.next/
+
+# Local backups
+*.backup
+*.backup*
+*.before-*
