@@ -244,6 +244,9 @@ export default async function CaseWorkspacePage({
 
                         <DocumentActions
                           documentId={document.id}
+                          deleteLabel={t.delete}
+                          deletingLabel={t.deleting}
+                          confirmationMessage={t.deletingDocumentConfirmation}
                         />
                       </div>
                     </div>
