@@ -349,28 +349,18 @@ export async function GET(request: Request) {
       )
 
       if (checkResponse.ok) {
-        // The Google Calendar event still exists.
-        calendarSkipped++
-        continue
-      }
+        const checkData = await checkResponse.json()
 
-      if (checkResponse.status === 404) {
-        // The event was deleted from Google Calendar.
-        // Remove the stale Supabase record so the event can be recreated below.
-        const { error: deleteCalendarRecordError } = await supabase
-          .from('google_calendar_events')
-          .delete()
-          .eq('id', existingCalendarEvent.id)
-
-        if (deleteCalendarRecordError) {
-          console.error(
-            'Could not remove stale Google Calendar event record:',
-            deleteCalendarRecordError
-          )
-          calendarFailed++
+        if (checkData.status !== 'cancelled') {
+          // The Google Calendar event still exists.
+          calendarSkipped++
           continue
         }
 
+        console.log(
+          `Google Calendar event ${existingCalendarEvent.google_event_id} is cancelled; recreating it.`
+        )
+      } else if (checkResponse.status === 404) {
         console.log(
           `Google Calendar event ${existingCalendarEvent.google_event_id} no longer exists; recreating it.`
         )
@@ -382,6 +372,20 @@ export async function GET(request: Request) {
           checkData
         )
 
+        calendarFailed++
+        continue
+      }
+
+      const { error: deleteCalendarRecordError } = await supabase
+        .from('google_calendar_events')
+        .delete()
+        .eq('id', existingCalendarEvent.id)
+
+      if (deleteCalendarRecordError) {
+        console.error(
+          'Could not remove stale Google Calendar event record:',
+          deleteCalendarRecordError
+        )
         calendarFailed++
         continue
       }
