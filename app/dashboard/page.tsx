@@ -148,7 +148,7 @@ export default async function DashboardPage() {
           </a>
 
           <a
-            href="/clients"
+            href="/tasks"
             className="block bg-white rounded-2xl border border-black/5 p-6 hover:border-black/15 hover:shadow-sm transition"
           >
             <p className="text-sm text-[#737373]">
