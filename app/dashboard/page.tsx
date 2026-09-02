@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n-server'
+import { createServiceClient } from '@/lib/supabase/service'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -14,6 +15,8 @@ export default async function DashboardPage() {
   }
 
   const { t } = await getTranslations()
+
+  const serviceSupabase = createServiceClient()
 
   const [clientsResult, casesResult, tasksResult, calendarResult] =
     await Promise.all([
@@ -32,7 +35,7 @@ export default async function DashboardPage() {
         .select('id', { count: 'exact', head: true })
         .eq('owner_id', user.id),
 
-      supabase
+      serviceSupabase
         .from('google_calendar_connections')
         .select('id')
         .eq('owner_id', user.id)
