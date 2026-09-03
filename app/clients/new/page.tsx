@@ -43,8 +43,22 @@ export default function NewClientPage() {
       return
     }
 
+    const { data: effectiveOwnerId, error: ownerError } = await supabase.rpc(
+      'get_effective_owner_id'
+    )
+
+    if (ownerError || !effectiveOwnerId) {
+      setError(
+        locale === 'es'
+          ? 'No se pudo determinar el propietario del despacho.'
+          : 'Could not determine the firm owner.'
+      )
+      setLoading(false)
+      return
+    }
+
     const { error } = await supabase.from('clients').insert({
-      owner_id: user.id,
+      owner_id: effectiveOwnerId,
       first_name: formData.get('first_name'),
       last_name: formData.get('last_name'),
       email: formData.get('email') || null,

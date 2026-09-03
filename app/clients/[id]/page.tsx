@@ -41,7 +41,6 @@ export default async function ClientDetailsPage({
       updated_at
     `)
     .eq('id', id)
-    .eq('owner_id', user.id)
     .single()
 
   if (clientError || !client) {
@@ -62,7 +61,6 @@ export default async function ClientDetailsPage({
       created_at
     `)
     .eq('client_id', client.id)
-    .eq('owner_id', user.id)
     .order('created_at', { ascending: false })
 
   const safeCases = cases ?? []
@@ -71,13 +69,11 @@ export default async function ClientDetailsPage({
     .from('documents')
     .select('id', { count: 'exact', head: true })
     .eq('client_id', client.id)
-    .eq('owner_id', user.id)
 
   const { count: tasksCount } = await supabase
     .from('tasks')
     .select('id', { count: 'exact', head: true })
     .eq('client_id', client.id)
-    .eq('owner_id', user.id)
 
 
   // TIE documents are read here only for the Immigration Deadlines panel.
@@ -86,7 +82,6 @@ export default async function ClientDetailsPage({
     .from('documents')
     .select('id, name, document_type, expires_at, case_id')
     .eq('client_id', client.id)
-    .eq('owner_id', user.id)
     .eq('document_type', 'TIE')
     .not('expires_at', 'is', null)
 
@@ -94,7 +89,6 @@ export default async function ClientDetailsPage({
     .from('tasks')
     .select('id, title, status, priority, due_date, case_id')
     .eq('client_id', client.id)
-    .eq('owner_id', user.id)
     .eq('status', 'pending')
     .not('due_date', 'is', null)
     .order('due_date', { ascending: true })
@@ -103,7 +97,6 @@ export default async function ClientDetailsPage({
     .from('documents')
     .select('id, name, document_type, status, expires_at, case_id')
     .eq('client_id', client.id)
-    .eq('owner_id', user.id)
     .not('expires_at', 'is', null)
     .order('expires_at', { ascending: true })
 

@@ -33,7 +33,6 @@ export default async function CasesPage() {
         last_name
       )
     `)
-    .eq('owner_id', user.id)
     .order('opened_at', { ascending: false })
 
   const safeCases = cases ?? []

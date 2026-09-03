@@ -54,8 +54,18 @@ export default function NewTaskForm({
       return
     }
 
+    const { data: effectiveOwnerId, error: ownerError } = await supabase.rpc(
+      'get_effective_owner_id'
+    )
+
+    if (ownerError || !effectiveOwnerId) {
+      setError(t.newTaskDescription)
+      setLoading(false)
+      return
+    }
+
     const { error } = await supabase.from('tasks').insert({
-      owner_id: user.id,
+      owner_id: effectiveOwnerId,
       client_id: id,
       case_id: caseId,
       title: formData.get('title'),

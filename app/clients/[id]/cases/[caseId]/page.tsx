@@ -42,7 +42,6 @@ export default async function CaseWorkspacePage({
     `)
     .eq('id', caseId)
     .eq('client_id', id)
-    .eq('owner_id', user.id)
     .single()
 
   if (error || !caseData) {
@@ -53,7 +52,6 @@ export default async function CaseWorkspacePage({
     .from('clients')
     .select('id, first_name, last_name')
     .eq('id', id)
-    .eq('owner_id', user.id)
     .single()
 
   if (!client) {
@@ -65,7 +63,6 @@ export default async function CaseWorkspacePage({
     .select('id, name, document_type, file_path, status, notes, created_at')
     .eq('case_id', caseId)
     .eq('client_id', id)
-    .eq('owner_id', user.id)
     .order('created_at', { ascending: false })
 
   const { data: tasks } = await supabase
@@ -73,7 +70,6 @@ export default async function CaseWorkspacePage({
     .select('id, title, description, status, priority, due_date, created_at')
     .eq('case_id', caseId)
     .eq('client_id', id)
-    .eq('owner_id', user.id)
     .order('created_at', { ascending: false })
 
   const safeTasks = tasks ?? []

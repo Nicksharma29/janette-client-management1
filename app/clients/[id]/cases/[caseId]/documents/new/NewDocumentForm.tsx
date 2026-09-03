@@ -74,6 +74,16 @@ export default function NewDocumentForm({
         return
       }
 
+      const { data: effectiveOwnerId, error: ownerError } = await supabase.rpc(
+        'get_effective_owner_id'
+      )
+
+      if (ownerError || !effectiveOwnerId) {
+        setError(t.uploadDocumentError)
+        setLoading(false)
+        return
+      }
+
       const formData = new FormData(event.currentTarget)
 
       const name = String(formData.get('name') || '').trim()
@@ -92,7 +102,7 @@ export default function NewDocumentForm({
         : 'bin'
 
       const storagePath =
-        `${user.id}/${id}/${caseId}/${crypto.randomUUID()}.${extension}`
+        `${effectiveOwnerId}/${id}/${caseId}/${crypto.randomUUID()}.${extension}`
 
       const { error: uploadError } = await supabase.storage
         .from('case-documents')
@@ -111,7 +121,7 @@ export default function NewDocumentForm({
       const { error: insertError } = await supabase
         .from('documents')
         .insert({
-          owner_id: user.id,
+          owner_id: effectiveOwnerId,
           client_id: id,
           case_id: caseId,
           name,

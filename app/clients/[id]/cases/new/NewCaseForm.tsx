@@ -67,9 +67,19 @@ export default function NewCaseForm({
       return
     }
 
+    const { data: effectiveOwnerId, error: ownerError } = await supabase.rpc(
+      'get_effective_owner_id'
+    )
+
+    if (ownerError || !effectiveOwnerId) {
+      setError(t.newCaseDescription)
+      setLoading(false)
+      return
+    }
+
     const { error } = await supabase.from('cases').insert({
       client_id: clientId,
-      owner_id: user.id,
+      owner_id: effectiveOwnerId,
       case_number: formData.get('case_number') || null,
       title: formData.get('title'),
       case_type: formData.get('case_type'),

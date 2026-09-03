@@ -31,7 +31,6 @@ export async function GET(
     .eq('id', documentId)
     .eq('client_id', id)
     .eq('case_id', caseId)
-    .eq('owner_id', user.id)
     .single()
 
   if (error || !document) {

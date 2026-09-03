@@ -22,18 +22,15 @@ export default async function DashboardPage() {
     await Promise.all([
       supabase
         .from('clients')
-        .select('id', { count: 'exact', head: true })
-        .eq('owner_id', user.id),
+        .select('id', { count: 'exact', head: true }),
 
       supabase
         .from('cases')
-        .select('id', { count: 'exact', head: true })
-        .eq('owner_id', user.id),
+        .select('id', { count: 'exact', head: true }),
 
       supabase
         .from('tasks')
-        .select('id', { count: 'exact', head: true })
-        .eq('owner_id', user.id),
+        .select('id', { count: 'exact', head: true }),
 
       serviceSupabase
         .from('google_calendar_connections')
