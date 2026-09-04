@@ -169,6 +169,12 @@ export default async function DashboardPage() {
             </p>
           </a>
         </div>
+
+        <footer className="mt-16 pb-4 text-center">
+          <span className="text-[11px] font-medium tracking-wide text-[#a3a3a3]">
+            Built by Nitish
+          </span>
+        </footer>
       </div>
     </main>
   )
