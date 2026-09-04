@@ -79,7 +79,7 @@ export default function NewDocumentForm({
       )
 
       if (ownerError || !effectiveOwnerId) {
-        setError(t.uploadDocumentError)
+        setError(`${t.uploadDocumentError}: ${ownerError?.message || 'Unknown owner error'}`)
         setLoading(false)
         return
       }
@@ -149,7 +149,7 @@ export default function NewDocumentForm({
       window.location.href = `/clients/${id}/cases/${caseId}`
     } catch (err) {
       console.error(err)
-      setError(t.uploadDocumentError)
+      setError(`${t.uploadDocumentError}: ${err instanceof Error ? err.message : String(err)}`)
       setLoading(false)
     }
   }
