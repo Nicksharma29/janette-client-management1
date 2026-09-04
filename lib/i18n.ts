@@ -13,6 +13,7 @@ export const translations = {
     clientManagementSystem: 'Sistema de gestión de clientes',
 
     dashboard: 'Panel principal',
+    logout: 'Cerrar sesión',
     welcome: 'Bienvenida a Janet',
     workspace: 'Tu espacio de gestión de clientes.',
 
@@ -249,6 +250,7 @@ export const translations = {
     clientManagementSystem: 'Client Management System',
 
     dashboard: 'Dashboard',
+    logout: 'Log out',
     welcome: 'Welcome to Janet',
     workspace: 'Your client management workspace.',
 

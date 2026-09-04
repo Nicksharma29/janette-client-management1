@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n-server'
 import { createServiceClient } from '@/lib/supabase/service'
+import LogoutButton from './components/LogoutButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -58,8 +59,12 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="text-sm text-[#737373]">
-            {user.email}
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-[#737373]">
+              {user.email}
+            </div>
+
+            <LogoutButton label={t.logout} />
           </div>
         </div>
       </header>
