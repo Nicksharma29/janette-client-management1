@@ -53,6 +53,8 @@ export default function NewDocumentForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
+    const form = event.currentTarget
+
     setLoading(true)
     setError('')
 
@@ -79,12 +81,12 @@ export default function NewDocumentForm({
       )
 
       if (ownerError || !effectiveOwnerId) {
-        setError(`${t.uploadDocumentError}: ${ownerError?.message || 'Unknown owner error'}`)
+        setError(t.uploadDocumentError)
         setLoading(false)
         return
       }
 
-      const formData = new FormData(event.currentTarget)
+      const formData = new FormData(form)
 
       const name = String(formData.get('name') || '').trim()
       const documentType = String(formData.get('document_type') || '').trim()
@@ -149,7 +151,7 @@ export default function NewDocumentForm({
       window.location.href = `/clients/${id}/cases/${caseId}`
     } catch (err) {
       console.error(err)
-      setError(`${t.uploadDocumentError}: ${err instanceof Error ? err.message : String(err)}`)
+      setError(t.uploadDocumentError)
       setLoading(false)
     }
   }
