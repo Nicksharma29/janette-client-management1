@@ -23,7 +23,7 @@ export default async function ClientDetailsPage({
 
   const { t } = await getTranslations()
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
@@ -34,6 +34,8 @@ export default async function ClientDetailsPage({
     userId: user.id,
     profileRole: profile?.role ?? null,
     isAdvocate,
+    profileError: profileError?.message ?? null,
+    profileErrorCode: profileError?.code ?? null,
   })
 
   const { data: client, error: clientError } = await supabase
