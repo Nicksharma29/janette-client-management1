@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from '@/lib/i18n-server'
+import ClientPayments from './components/ClientPayments'
 
 export default async function ClientDetailsPage({
   params,
@@ -21,6 +22,14 @@ export default async function ClientDetailsPage({
   }
 
   const { t } = await getTranslations()
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const isAdvocate = profile?.role === 'advocate'
 
   const { data: client, error: clientError } = await supabase
     .from('clients')
@@ -64,6 +73,39 @@ export default async function ClientDetailsPage({
     .order('created_at', { ascending: false })
 
   const safeCases = cases ?? []
+
+  let paymentSettings: { agreed_fee: number | string | null } | null = null
+  let payments: Array<{
+    id: string
+    amount: number | string
+    payment_date: string
+    payment_method: string
+    notes: string | null
+  }> = []
+
+  if (isAdvocate) {
+    const { data: paymentSettingsData } = await supabase
+      .from('client_payment_settings')
+      .select('agreed_fee')
+      .eq('client_id', client.id)
+      .maybeSingle()
+
+    const { data: paymentsData } = await supabase
+      .from('client_payments')
+      .select('id, amount, payment_date, payment_method, notes, created_at')
+      .eq('client_id', client.id)
+      .order('payment_date', { ascending: false })
+      .order('created_at', { ascending: false })
+
+    paymentSettings = paymentSettingsData
+    payments = (paymentsData ?? []).map((payment) => ({
+      id: payment.id,
+      amount: payment.amount,
+      payment_date: payment.payment_date,
+      payment_method: payment.payment_method,
+      notes: payment.notes,
+    }))
+  }
 
   const { count: documentsCount } = await supabase
     .from('documents')
@@ -289,6 +331,51 @@ export default async function ClientDetailsPage({
               {client.notes || t.noNotesAdded}
             </p>
           </section>
+
+          {isAdvocate && (
+            <ClientPayments
+              clientId={client.id}
+              initialAgreedFee={Number(paymentSettings?.agreed_fee ?? 0)}
+              initialPayments={payments.map((payment) => ({
+                id: payment.id,
+                amount: Number(payment.amount),
+                payment_date: payment.payment_date,
+                payment_method: payment.payment_method,
+                notes: payment.notes,
+              }))}
+              t={{
+                paymentInformation: t.paymentInformation,
+                agreedFee: t.agreedFee,
+                totalPaid: t.totalPaid,
+                outstandingBalance: t.outstandingBalance,
+                paymentStatus: t.paymentStatus,
+                paid: t.paid,
+                partiallyPaid: t.partiallyPaid,
+                pendingPayment: t.pendingPayment,
+                paymentHistory: t.paymentHistory,
+                noPaymentsYet: t.noPaymentsYet,
+                addPayment: t.addPayment,
+                paymentAmount: t.paymentAmount,
+                paymentDate: t.paymentDate,
+                paymentMethod: t.paymentMethod,
+                paymentNotes: t.paymentNotes,
+                paymentMethodCash: t.paymentMethodCash,
+                paymentMethodBankTransfer: t.paymentMethodBankTransfer,
+                paymentMethodCard: t.paymentMethodCard,
+                paymentMethodOther: t.paymentMethodOther,
+                savePaymentSettings: t.savePaymentSettings,
+                savePayment: t.savePayment,
+                editPayment: t.editPayment,
+                deletePayment: t.deletePayment,
+                cancel: t.cancel,
+                paymentSaved: t.paymentSaved,
+                paymentUpdated: t.paymentUpdated,
+                paymentDeleted: t.paymentDeleted,
+                paymentSaveError: t.paymentSaveError,
+                paymentDeleteError: t.paymentDeleteError,
+              }}
+            />
+          )}
 
           <section className="bg-white rounded-2xl border border-black/5 p-6">
             <div className="flex items-start justify-between gap-4">
