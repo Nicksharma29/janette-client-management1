@@ -30,6 +30,11 @@ export default async function ClientDetailsPage({
     .maybeSingle()
 
   const isAdvocate = profile?.role === 'advocate'
+  console.log('CLIENT PAGE ROLE CHECK:', {
+    userId: user.id,
+    profileRole: profile?.role ?? null,
+    isAdvocate,
+  })
 
   const { data: client, error: clientError } = await supabase
     .from('clients')
